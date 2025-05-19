@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+:root {
+    --font-playfair-display: "Playfair Display", serif;
+    --font-dm-sans: "DM Sans", sans-serif;
+    --font-rubik: "Rubik", sans-serif;
+    --font-space-grotesk: "Space Grotesk", sans-serif;
+}
+
+@theme {
+    --color-cream: #fcf7ee;
+    --color-black: #040402;
+    --color-orange: #c65122;
+    --color-orange-dark: #b34a1f;
+    --color-brown: #8a2424;
+    --color-green: #7a9785;
+    --color-amber: #fea250;
+    --color-red: #c50022;
+    --color-gray-dark: #4f5665;
+    --color-gray: #73726c;
+    --color-gray-light: #6a7282;
+    --color-gray-lighter: #D5D7DA;
+
+    --font-serif: var(--font-playfair-display), serif;
+    --font-sans: var(--font-dm-sans), sans-serif;
+    --font-rubik: var(--font-rubik), sans-serif;
+    --font-grotesk: var(--font-space-grotesk), sans-serif;
+}
+
+@layer base {
+    input {
+        @apply font-grotesk w-full h-full px-3 py-2 text-sm;
+        @apply placeholder:text-gray;
+        @apply focus:outline-none;
+        @apply disabled:cursor-not-allowed;
+    }
+
+    label {
+        @apply text-black flex flex-1;
+    }
+
+    button {
+        @apply flex items-center justify-center rounded-full transition-colors duration-150 cursor-pointer;
+
+        &:disabled {
+            @apply cursor-not-allowed opacity-50;
+        }
+    }
+
+    p {
+        @apply text-sm text-gray-dark leading-tight font-light;
+    }
+}
+
+@layer components {
+    .form-group {
+        @apply flex flex-col gap-y-2
+    }
+
+    .input-wrapper {
+        @apply relative w-[350px] h-11 rounded-full overflow-hidden border border-gray-lighter bg-white flex items-center justify-start;
+        @apply focus-within:outline-none focus-within:ring-2 focus-within:ring-orange focus-within:border-transparent;
+
+        &:has(input:disabled) {
+            @apply bg-gray-50;
+        }
+    }
+
+    .label-wrapper {
+        @apply w-full flex justify-between items-center text-sm font-grotesk font-light
+    }
+
+    .label-required {
+        @apply after:content-['*'] after:ml-0.5 after:text-orange;
+    }
+
+    .optional {
+        @apply text-sm text-gray-dark
+    }
+
+    .standard-button {
+        @apply text-sm font-bold font-grotesk px-12 h-12;
+    }
+
+    .icon-button {
+        @apply w-12 h-12;
+    }
+}
+
+@layer utilities {
+    .spinner {
+        animation: rotation 1.35s linear infinite;
+
+        &:nth-child(1) {
+            stroke: theme(colors.cream);
+        }
+    }
+
+    .circle {
+        stroke-dasharray: 180;
+        stroke-dashoffset: 0;
+        transform-origin: center;
+        animation: turn 1.35s ease-in-out infinite;
+    }
+
+    .custom-shadow-orange {
+        box-shadow: 0 20px 41px -12px var(--color-orange);
+
+        &:hover {
+            box-shadow: 0 20px 41px -12px var(--color-orange-dark);
+        }
+    }
+
+    .custom-shadow-black {
+        box-shadow: 0 20px 41px -12px var(--color-black);
+    }
+}
+
+
+@keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(270deg); }
+}
+
+@keyframes turn {
+    0% { stroke-dashoffset: 180; }
+    50% { stroke-dashoffset: 45; transform: rotate(135deg); }
+    100% { stroke-dashoffset: 180; transform: rotate(450deg); }
+}
