@@ -2,6 +2,7 @@ import "./globals.css";
 
 import type { ReactNode } from "react";
 import { rubik, dmSans, playfairDisplay, spaceGrotesk } from "@/lib/fonts";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -18,7 +19,19 @@ export default function RootLayout({
         ${spaceGrotesk.variable}
         `}
     >
-      <body className={`font-grotesk bg-light-primary-background`}>{children}</body>
+      <body className={`bg-background text-foreground antialiased`} style={{fontFamily: 'var(--font-space-grotesk), sans-serif'}}>
+        {children}
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: 'hsl(var(--background))',
+              color: 'hsl(var(--foreground))',
+              border: '1px solid hsl(var(--border))',
+            },
+          }}
+        />
+      </body>
     </html>
   );
 }

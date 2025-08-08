@@ -5,10 +5,34 @@
     --font-dm-sans: "DM Sans", sans-serif;
     --font-rubik: "Rubik", sans-serif;
     --font-space-grotesk: "Space Grotesk", sans-serif;
+
+    --background: #fcf7ee;
+    --foreground: #040402;
+    --card: #ffffff;
+    --card-foreground: #040402;
+    --popover: #ffffff;
+    --popover-foreground: #040402;
+    --primary: #c65122;
+    --primary-foreground: #fcf7ee;
+    --secondary: #7a9785;
+    --secondary-foreground: #fcf7ee;
+    --muted: #D5D7DA;
+    --muted-foreground: #73726c;
+    --accent: #fea250;
+    --accent-foreground: #040402;
+    --destructive: #c50022;
+    --destructive-foreground: #fcf7ee;
+    --border: #D5D7DA;
+    --input: #D5D7DA;
+    --ring: #c65122;
+    --radius: 0.5rem;
 }
 
 @theme {
     --color-cream: #fcf7ee;
+    --color-cream-light: #f6f4ee;
+    --color-cream-lighter: #FAF8F4;
+    --color-cream-dark: #e9e6dc;
     --color-black: #040402;
     --color-orange: #c65122;
     --color-orange-dark: #b34a1f;
@@ -20,16 +44,38 @@
     --color-gray: #73726c;
     --color-gray-light: #6a7282;
     --color-gray-lighter: #D5D7DA;
+    --color-gray-border: #dad9d4;
 
     --font-serif: var(--font-playfair-display), serif;
     --font-sans: var(--font-dm-sans), sans-serif;
     --font-rubik: var(--font-rubik), sans-serif;
     --font-grotesk: var(--font-space-grotesk), sans-serif;
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
 }
 
 @layer base {
+    body {
+        font-family: var(--font-space-grotesk), sans-serif;
+    }
+
     input {
-        @apply font-grotesk w-full h-full px-3 py-2 text-sm;
+        @apply w-full h-full px-3 py-2 text-sm;
+        font-family: var(--font-space-grotesk), sans-serif;
         @apply placeholder:text-gray;
         @apply focus:outline-none;
         @apply disabled:cursor-not-allowed;
@@ -59,7 +105,8 @@
 
     .input-wrapper {
         @apply relative w-[350px] h-11 rounded-full overflow-hidden border border-gray-lighter bg-white flex items-center justify-start;
-        @apply focus-within:outline-none focus-within:ring-2 focus-within:ring-orange focus-within:border-transparent;
+        @apply focus-within:outline-none focus-within:ring-2 focus-within:ring-orange/40 focus-within:ring-offset-0 focus-within:border-orange;
+        @apply transition-all duration-200;
 
         &:has(input:disabled) {
             @apply bg-gray-50;
@@ -67,11 +114,12 @@
     }
 
     .label-wrapper {
-        @apply w-full flex justify-between items-center text-sm font-grotesk font-light
+        @apply w-full flex justify-between items-center text-sm font-light;
+        font-family: var(--font-space-grotesk), sans-serif;
     }
 
     .label-required {
-        @apply after:content-['*'] after:ml-0.5 after:text-orange;
+        @apply inline-flex items-center after:content-['*'] after:ml-0.5 after:text-orange;
     }
 
     .optional {
@@ -92,7 +140,7 @@
         animation: rotation 1.35s linear infinite;
 
         &:nth-child(1) {
-            stroke: theme(colors.cream);
+            stroke: var(--color-cream);
         }
     }
 
@@ -101,6 +149,22 @@
         stroke-dashoffset: 0;
         transform-origin: center;
         animation: turn 1.35s ease-in-out infinite;
+    }
+
+    .animate-caret-blink {
+        animation: caret-blink 1s infinite;
+    }
+
+    .shadow-orange {
+        box-shadow: 0 20px 41px -12px var(--color-orange);
+    }
+
+    .shadow-orange-dark {
+        box-shadow: 0 20px 41px -12px var(--color-orange-dark);
+    }
+
+    .shadow-black {
+        box-shadow: 0 20px 41px -12px var(--color-black);
     }
 
     .custom-shadow-orange {
@@ -126,4 +190,9 @@
     0% { stroke-dashoffset: 180; }
     50% { stroke-dashoffset: 45; transform: rotate(135deg); }
     100% { stroke-dashoffset: 180; transform: rotate(450deg); }
+}
+
+@keyframes caret-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
 }
