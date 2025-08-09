@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, User, UserRound, HelpCircle, Baby, Users, Briefcase, Crown, Zap, Target, TrendingUp, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { useStepperStore, type Role, type Gender, type AgeRange, type DifficultyLevel } from "@/lib/stores/stepper-store";
+import { useStepper } from "@/lib/hooks/use-stepper";
+import type { Role, Gender, AgeRange, DifficultyLevel } from "@/lib/validations/stepper";
 import {
   YoungProfessionalIcon,
   SalesTeamIcon,
@@ -113,7 +113,6 @@ const difficultyLevels = [
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const [isHydrated, setIsHydrated] = useState(false);
   const {
     currentStep,
     selectedRole,
@@ -128,49 +127,11 @@ export default function OnboardingPage() {
     canGoPrevious,
     nextStep,
     previousStep,
-    completeStep,
-  } = useStepperStore();
-
-  // Wait for hydration to avoid SSR mismatch
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
-
-  // Sync URL with current step
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    url.searchParams.set("step", currentStep.toString());
-    window.history.replaceState({}, "", url);
-  }, [currentStep]);
-
-  const handleRoleSelect = (roleId: Role) => {
-    setSelectedRole(roleId);
-  };
-
-  const handleGenderSelect = (genderId: Gender) => {
-    setSelectedGender(genderId);
-  };
-
-  const handleAgeRangeSelect = (ageRangeId: AgeRange) => {
-    setSelectedAgeRange(ageRangeId);
-  };
-
-  const handleDifficultyLevelSelect = (difficultyLevelId: DifficultyLevel) => {
-    setSelectedDifficultyLevel(difficultyLevelId);
-  };
+    getProgress,
+  } = useStepper();
 
   const handleNext = () => {
-    console.log('Handle next clicked', { 
-      canGoNext: canGoNext(), 
-      selectedRole, 
-      currentStep,
-      isHydrated 
-    });
-    
     if (canGoNext()) {
-      completeStep(currentStep);
-      
-      // If this is the last step, redirect to main app
       if (currentStep === 4) {
         console.log('Onboarding completed', {
           selectedRole,
@@ -178,7 +139,7 @@ export default function OnboardingPage() {
           selectedAgeRange,
           selectedDifficultyLevel
         });
-        router.push("/"); // Redirect to main app
+        router.push("/");
       } else {
         nextStep();
       }
@@ -249,7 +210,7 @@ export default function OnboardingPage() {
                   return (
                     <button
                       key={role.id}
-                      onClick={() => handleRoleSelect(role.id)}
+                      onClick={() => setSelectedRole(role.id)}
                       className="w-full max-w-lg mx-auto flex items-center gap-4 p-4 rounded-xl border border-black hover:border-gray-600 transition-colors bg-transparent text-left group"
                     >
                       <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
@@ -282,7 +243,7 @@ export default function OnboardingPage() {
               {/* Confirm button */}
               <Button
                 onClick={handleNext}
-                disabled={!isHydrated || !canGoNext()}
+                disabled={!canGoNext()}
                 variant="contained"
                 size="default"
                 className="w-full max-w-lg mx-auto"
@@ -312,7 +273,7 @@ export default function OnboardingPage() {
                   return (
                     <button
                       key={gender.id}
-                      onClick={() => handleGenderSelect(gender.id)}
+                      onClick={() => setSelectedGender(gender.id)}
                       className="w-full max-w-lg mx-auto flex items-center gap-4 p-4 rounded-xl border border-black hover:border-gray-600 transition-colors bg-transparent text-left group"
                     >
                       <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
@@ -345,7 +306,7 @@ export default function OnboardingPage() {
               {/* Confirm button */}
               <Button
                 onClick={handleNext}
-                disabled={!isHydrated || !canGoNext()}
+                disabled={!canGoNext()}
                 variant="contained"
                 size="default"
                 className="w-full max-w-lg mx-auto"
@@ -375,7 +336,7 @@ export default function OnboardingPage() {
                   return (
                     <button
                       key={ageRange.id}
-                      onClick={() => handleAgeRangeSelect(ageRange.id)}
+                      onClick={() => setSelectedAgeRange(ageRange.id)}
                       className="w-full max-w-lg mx-auto flex items-center gap-4 p-4 rounded-xl border border-black hover:border-gray-600 transition-colors bg-transparent text-left group"
                     >
                       <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
@@ -408,7 +369,7 @@ export default function OnboardingPage() {
               {/* Confirm button */}
               <Button
                 onClick={handleNext}
-                disabled={!isHydrated || !canGoNext()}
+                disabled={!canGoNext()}
                 variant="contained"
                 size="default"
                 className="w-full max-w-lg mx-auto"
@@ -438,7 +399,7 @@ export default function OnboardingPage() {
                   return (
                     <button
                       key={difficultyLevel.id}
-                      onClick={() => handleDifficultyLevelSelect(difficultyLevel.id)}
+                      onClick={() => setSelectedDifficultyLevel(difficultyLevel.id)}
                       className="w-full max-w-lg mx-auto flex items-center gap-4 p-4 rounded-xl border border-black hover:border-gray-600 transition-colors bg-transparent text-left group"
                     >
                       <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
@@ -471,7 +432,7 @@ export default function OnboardingPage() {
               {/* Confirm button */}
               <Button
                 onClick={handleNext}
-                disabled={!isHydrated || !canGoNext()}
+                disabled={!canGoNext()}
                 variant="contained"
                 size="default"
                 className="w-full max-w-lg mx-auto"

@@ -1,59 +1,39 @@
-import { LoginRequest, RegisterRequest, LoginResponse, RegisterResponse, APIResponse } from "@/lib/types/api";
+import { api } from "./client";
+import { 
+  loginRequestSchema,
+  registerRequestSchema,
+  loginResponseSchema,
+  registerResponseSchema,
+  userSchema,
+  type LoginRequest,
+  type RegisterRequest,
+  type LoginResponse,
+  type RegisterResponse,
+  type User
+} from "@/lib/schemas/api";
 
-const API_BASE_URL = "http://15.237.182.40:8000";
-
-async function apiCall<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<APIResponse<T>> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-      ...options,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return {
-        error: data,
-        status: response.status,
-      };
-    }
-
-    return {
-      data,
-      status: response.status,
-    };
-  } catch (error) {
-    return {
-      error: {
-        detail: [
-          {
-            loc: ["network"],
-            msg: "Network error occurred",
-            type: "network_error",
-          },
-        ],
-      },
-      status: 0,
-    };
-  }
+export async function loginUser(credentials: LoginRequest) {
+  const validatedCredentials = loginRequestSchema.parse(credentials);
+  
+  return api.post("/api/v1/auth/login", loginResponseSchema, validatedCredentials);
 }
 
-export async function loginUser(credentials: LoginRequest): Promise<APIResponse<LoginResponse>> {
-  return apiCall<LoginResponse>("/api/v1/auth/login", {
-    method: "POST",
-    body: JSON.stringify(credentials),
-  });
+export async function registerUser(userData: RegisterRequest) {
+  const validatedUserData = registerRequestSchema.parse(userData);
+  
+  return api.post("/api/v1/auth/register", registerResponseSchema, validatedUserData);
 }
 
-export async function registerUser(userData: RegisterRequest): Promise<APIResponse<RegisterResponse>> {
-  return apiCall<RegisterResponse>("/api/v1/auth/register", {
-    method: "POST",
-    body: JSON.stringify(userData),
-  });
+export async function getCurrentUser() {
+  return api.get("/api/v1/auth/me", userSchema);
 }
+
+export async function logoutUser() {
+  return api.post("/api/v1/auth/logout");
+}
+
+export async function refreshToken() {
+  return api.post("/api/v1/auth/refresh", loginResponseSchema);
+}
+
+export type { LoginRequest, RegisterRequest, LoginResponse, RegisterResponse, User };
